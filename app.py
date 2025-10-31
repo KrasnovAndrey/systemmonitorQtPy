@@ -1,7 +1,7 @@
 import sys
 from PyQt6.QtWidgets import QApplication
 from widgets.custom_widgets import CustomWindow
-from location_of_objects.main_page import MainPage
+from location_of_objects.main import MainPage
 
 
 class App:

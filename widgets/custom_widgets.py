@@ -28,11 +28,9 @@ class CustomButton(QPushButton):
             }
             QPushButton:hover {
                 background-color: #2980b9;
-                transform: translateY(-1px);
             }
             QPushButton:pressed {
                 background-color: #21618c;
-                transform: translateY(0px);
             }
         """
         )
@@ -104,6 +102,18 @@ class CustomSidebar(QWidget):
         self.layout = layout
 
         layout.addWidget(title)
+        self.setLayout(layout)
+
+    def add_button(self, text):
+        btn = SidebarButton(text)
+        index = len(self.buttons)
+        btn.clicked_signal.connect(lambda idx=index: self.tab_changed.emit(idx))
+        self.buttons.append(btn)
+        self.layout.addWidget(btn)
+        return btn
+
+    def add_stretch(self):
+        self.layout.addStretch()
 
         version = QLabel("v0.0.1")
         version.setStyleSheet(
@@ -117,20 +127,7 @@ class CustomSidebar(QWidget):
             }
         """
         )
-        layout.addWidget(version)
-
-        self.setLayout(layout)
-
-    def add_button(self, text):
-        btn = SidebarButton(text)
-        index = len(self.buttons)
-        btn.clicked_signal.connect(lambda: self.tab_changed.emit(index))
-        self.buttons.append(btn)
-        self.layout.insertWidget(self.layout.count() - 2, btn)
-        return btn
-
-    def add_stretch(self):
-        self.layout.addStretch()
+        self.layout.addWidget(version)
 
     def add_version(self, version_text="v0.0.1"):
         version = QLabel(version_text)
@@ -245,7 +242,6 @@ class CustomCard(QFrame):
             }}
             QFrame:hover {{
                 background-color: #5dade2;
-                transform: translateY(-2px);
             }}
         """
         )
