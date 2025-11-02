@@ -46,6 +46,16 @@ def get_cpu_name():
     except:
         pass
 
+    try:
+        result = subprocess.run(
+            ["wmic", "cpu", "get", "name"], capture_output=True, text=True
+        )
+        lines = [line.strip() for line in result.stdout.split("\n") if line.strip()]
+        if len(lines) > 1:
+            return lines[1]
+    except:
+        pass
+
     return platform.processor() or "Неизвестно"
 
 
@@ -61,6 +71,20 @@ def get_gpus():
                     gpus.append(gpu_name)
     except:
         pass
+
+    if not gpus:
+        try:
+            result = subprocess.run(
+                ["wmic", "path", "win32_VideoController", "get", "name"],
+                capture_output=True,
+                text=True,
+            )
+            lines = [line.strip() for line in result.stdout.split("\n") if line.strip()]
+            for line in lines[1:]:
+                if line and line not in gpus:
+                    gpus.append(line)
+        except:
+            pass
 
     return gpus if gpus else ["Информация недоступна"]
 
