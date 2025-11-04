@@ -1,0 +1,9 @@
+service_name,required
+systemd-journald,true
+systemd-logind,true
+systemd-resolved,true
+systemd-udevd,true
+dbus-broker,true
+NetworkManager,true
+polkit,true
+systemd-userdbd,true

@@ -3,9 +3,10 @@ from widgets.custom_widgets import CustomSidebar
 from location_of_objects.dashboard import create_dashboard
 from location_of_objects.system_page import create_system
 from location_of_objects.monitoring_page import create_monitoring
-from location_of_objects.control_page import create_control
+
 from location_of_objects.visualization_page import create_visualization
 from location_of_objects.settings_page import create_settings
+from location_of_objects.scan_system import create_scan_system
 
 
 class MainPage:
@@ -24,8 +25,8 @@ class MainPage:
 
         btn1 = self.sidebar.add_button("Главная")
         btn2 = self.sidebar.add_button("Система")
-        btn3 = self.sidebar.add_button("Мониторинг")
-        btn4 = self.sidebar.add_button("Управление")
+        btn3 = self.sidebar.add_button("Сканировать систему")
+        btn4 = self.sidebar.add_button("Мониторинг")
         btn5 = self.sidebar.add_button("Визуализация")
         btn6 = self.sidebar.add_button("Настройки")
 
@@ -41,8 +42,8 @@ class MainPage:
 
         self.pages.addWidget(create_dashboard())
         self.pages.addWidget(create_system())
+        self.pages.addWidget(create_scan_system())
         self.pages.addWidget(create_monitoring())
-        self.pages.addWidget(create_control())
         self.pages.addWidget(create_visualization())
         self.pages.addWidget(create_settings())
 

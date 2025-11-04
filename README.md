@@ -20,11 +20,11 @@
 
 ### 📅 04.11.2025 - Мониторинг служб и процессов
 
-- ⚪ Проверка состояния системных служб
-- ⚪ Сканирование работоспособности системы
-- ⚪ Сравнение с эталонным шаблоном
+- 🟢 Проверка состояния системных служб
+- 🟢 Сканирование системы
+- 🟢2 Сравнение с эталонным шаблоном
 - 🟢 Мониторинг нагрузки
-- ⚪ Работа с CSV файлами для шаблонов
+- 🟢 Работа с CSV файлами для шаблонов
 
 ### 📅 07.11.2025 - Панель управления
 
@@ -40,8 +40,6 @@
 - ⚪ Функции сохранения и экспорта настроек
 - ⚪ Работа с файлами конфигураций
 - ⚪ Сборка приложения в исполняемые файлы
-
-# Что уже реализовано
 
 ### Библиотека кастом виджетов
 
@@ -60,14 +58,23 @@ systemmonitorQtPy/
 ├── widgets/
 │   ├── custom_widgets.py
 │   └── simple_chart.py
-└── location_of_objects/
-    ├── main.py
-    ├── dashboard.py
-    ├── system_page.py
-    ├── monitoring_page.py
-    ├── control_page.py
-    ├── visualization_page.py
-    └── settings_page.py
+├── location_of_objects/
+│   ├── main.py
+│   ├── dashboard.py
+│   ├── system_page.py
+│   ├── monitoring_page.py
+│   ├── scan_system.py
+│   ├── control_page.py
+│   ├── visualization_page.py
+│   └── settings_page.py
+├── templates/
+│   ├── linux_services.csv
+│   └── windows_services.csv
+├── DOCS.md
+├── README.md
+├── requirements.txt
+├── image.png
+└── image-1.png
 ```
 
 # Требования(на данный момент)
