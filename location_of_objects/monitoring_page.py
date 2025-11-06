@@ -8,11 +8,10 @@ class MonitoringWidget(QWidget):
     def __init__(self):
         super().__init__()
         self.sort_by = "cpu"
-        self.prev_proc_io = {}
         self.setup_ui()
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_data)
-        self.timer.start(1000)
+        self.timer.start(3000)
 
     def setup_ui(self):
         layout = QVBoxLayout()
@@ -96,32 +95,11 @@ class MonitoringWidget(QWidget):
             self.processes_layout.itemAt(i).widget().setParent(None)
 
         processes = []
-        for proc in psutil.process_iter():
+        for proc in psutil.process_iter(['pid', 'name', 'cpu_percent', 'memory_percent']):
             try:
-                pinfo = proc.as_dict(
-                    attrs=["pid", "name", "cpu_percent", "memory_percent"]
-                )
-
-                try:
-                    io_counters = proc.io_counters()
-                    current_io = io_counters.read_bytes + io_counters.write_bytes
-
-                    if pinfo["pid"] in self.prev_proc_io:
-                        io_diff = current_io - self.prev_proc_io[pinfo["pid"]]
-                        pinfo["disk_usage"] = max(0, io_diff / 1024)
-                    else:
-                        pinfo["disk_usage"] = 0
-
-                    self.prev_proc_io[pinfo["pid"]] = current_io
-                except:
-                    pinfo["disk_usage"] = 0
-
-                try:
-                    connections = proc.connections()
-                    pinfo["network_usage"] = len(connections)
-                except:
-                    pinfo["network_usage"] = 0
-
+                pinfo = proc.info
+                pinfo["disk_usage"] = 0
+                pinfo["network_usage"] = 0
                 processes.append(pinfo)
             except:
                 continue
@@ -135,8 +113,8 @@ class MonitoringWidget(QWidget):
         elif self.sort_by == "network":
             processes.sort(key=lambda x: x["network_usage"], reverse=True)
 
-        for proc in processes[:15]:
-            proc_text = f"PID: {proc['pid']} | {proc['name']} | CPU: {proc['cpu_percent'] or 0:.1f}% | RAM: {proc['memory_percent'] or 0:.1f}% | Диск: {proc['disk_usage']:.1f}KB/s | Сеть: {proc['network_usage']}"
+        for proc in processes[:10]:
+            proc_text = f"PID: {proc['pid']} | {proc['name']} | CPU: {proc['cpu_percent'] or 0:.1f}% | RAM: {proc['memory_percent'] or 0:.1f}%"
             proc_label = CustomLabel(proc_text)
             self.processes_layout.addWidget(proc_label)
 
