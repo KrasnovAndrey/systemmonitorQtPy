@@ -1,14 +1,44 @@
 from PyQt6.QtWidgets import QSlider, QHBoxLayout, QCheckBox
 from PyQt6.QtCore import Qt
 from widgets.custom_widgets import CustomPanel, CustomLabel, CustomButton
+import subprocess
+import os
+import platform
 
+system = platform.system().lower()
+prev_volume = 50
 
 def set_brightness(value):
-    pass
+    try:
+        if system == "windows":
+            subprocess.run(["powershell", "-Command", f"(Get-WmiObject -Namespace root/WMI -Class WmiMonitorBrightnessMethods).WmiSetBrightness(1,{value})"], shell=True)
+        else:
+            brightness = value / 100.0
+            subprocess.run(["xrandr", "--output", "eDP-1", "--brightness", str(brightness)], shell=True)
+    except:
+        pass
 
 
-def set_volume(value):
-    pass
+def volume_up():
+    try:
+        if system == "windows":
+            import keyboard
+            keyboard.send("volume up")
+        else:
+            subprocess.run(["amixer", "set", "Master", "5%+"], shell=True)
+    except:
+        pass
+
+
+def volume_down():
+    try:
+        if system == "windows":
+            import keyboard
+            keyboard.send("volume down")
+        else:
+            subprocess.run(["amixer", "set", "Master", "5%-"], shell=True)
+    except:
+        pass
 
 
 def toggle_wifi(enabled):
@@ -20,19 +50,43 @@ def toggle_bluetooth(enabled):
 
 
 def sleep_mode():
-    pass
+    try:
+        if system == "windows":
+            subprocess.run(["rundll32.exe", "powrprof.dll,SetSuspendState", "0,1,0"], shell=True)
+        else:
+            subprocess.run(["systemctl", "suspend"], shell=True)
+    except:
+        pass
 
 
 def restart_system():
-    pass
+    try:
+        if system == "windows":
+            subprocess.run(["shutdown", "/r", "/t", "0"], shell=True)
+        else:
+            subprocess.run(["shutdown", "-r", "now"], shell=True)
+    except:
+        pass
 
 
 def shutdown_system():
-    pass
+    try:
+        if system == "windows":
+            subprocess.run(["shutdown", "/s", "/t", "0"], shell=True)
+        else:
+            subprocess.run(["shutdown", "-h", "now"], shell=True)
+    except:
+        pass
 
 
 def open_autostart_page():
-    pass
+    try:
+        if system == "windows":
+            subprocess.run(["msconfig"], shell=True)
+        else:
+            subprocess.run(["nautilus", os.path.expanduser("~/.config/autostart/")], shell=True)
+    except:
+        pass
 
 
 def create_settings():
@@ -48,11 +102,12 @@ def create_settings():
 
     volume_layout = QHBoxLayout()
     volume_layout.addWidget(CustomLabel("Громкость"))
-    volume_slider = QSlider(Qt.Orientation.Horizontal)
-    volume_slider.setRange(0, 100)
-    volume_slider.setValue(75)
-    volume_slider.valueChanged.connect(set_volume)
-    volume_layout.addWidget(volume_slider)
+    volume_down_btn = CustomButton("-", min_height=35)
+    volume_up_btn = CustomButton("+", min_height=35)
+    volume_down_btn.clicked.connect(volume_down)
+    volume_up_btn.clicked.connect(volume_up)
+    volume_layout.addWidget(volume_down_btn)
+    volume_layout.addWidget(volume_up_btn)
 
     panel.add_layout(brightness_layout)
     panel.add_layout(volume_layout)

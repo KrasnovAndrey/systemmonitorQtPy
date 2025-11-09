@@ -98,8 +98,21 @@ class MonitoringWidget(QWidget):
         for proc in psutil.process_iter(['pid', 'name', 'cpu_percent', 'memory_percent']):
             try:
                 pinfo = proc.info
-                pinfo["disk_usage"] = 0
-                pinfo["network_usage"] = 0
+                
+                try:
+                    proc_obj = psutil.Process(pinfo['pid'])
+                    io_counters = proc_obj.io_counters()
+                    pinfo["disk_usage"] = io_counters.read_bytes + io_counters.write_bytes
+                except:
+                    pinfo["disk_usage"] = 0
+                
+                try:
+                    proc_obj = psutil.Process(pinfo['pid'])
+                    connections = proc_obj.connections()
+                    pinfo["network_usage"] = len(connections)
+                except:
+                    pinfo["network_usage"] = 0
+                    
                 processes.append(pinfo)
             except:
                 continue
