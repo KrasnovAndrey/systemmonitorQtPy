@@ -63,7 +63,6 @@ systemmonitorQtPy/
 │   ├── system_page.py
 │   ├── monitoring_page.py
 │   ├── scan_system.py
-│   ├── control_page.py
 │   ├── visualization_page.py
 │   └── settings_page.py
 ├── templates/
