@@ -4,12 +4,14 @@ from PyQt6.QtWidgets import QApplication
 from PyQt6.QtGui import QIcon
 from widgets.custom_widgets import CustomWindow
 from location_of_objects.main import MainPage
+from database import SystemDatabase
 
 
 class App:
     def __init__(self):
         self.app = QApplication(sys.argv)
         self.window = CustomWindow("System Monitor", 1200, 700)
+        self.db = SystemDatabase()
         self.setup_ui()
 
     def setup_ui(self):

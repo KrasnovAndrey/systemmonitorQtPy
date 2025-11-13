@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import QVBoxLayout, QWidget, QHBoxLayout
 from PyQt6.QtCore import QTimer, QThread, pyqtSignal
 from widgets.custom_widgets import CustomPanel, CustomLabel, CustomButton
+from database import SystemDatabase
 import subprocess
 import platform
 import csv
@@ -160,6 +161,7 @@ class ScanWidget(QWidget):
         self.setLayout(layout)
 
     def start_scan(self, scan_type):
+        self.last_scan_type = scan_type
         self.services_btn.setEnabled(False)
         self.health_btn.setEnabled(False)
         self.status_label.setText("Сканирование...")
@@ -173,6 +175,14 @@ class ScanWidget(QWidget):
         self.status_label.setText(result_text)
         self.services_btn.setEnabled(True)
         self.health_btn.setEnabled(True)
+
+        if hasattr(self, "last_scan_type") and self.last_scan_type == "health":
+            try:
+                db = SystemDatabase()
+                db.save_health_scan()
+                print("Сканирование здоровья сохранено")
+            except:
+                pass
 
 
 def create_scan_system():

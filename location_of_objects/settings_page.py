@@ -8,13 +8,24 @@ import platform
 system = platform.system().lower()
 prev_volume = 50
 
+
 def set_brightness(value):
     try:
         if system == "windows":
-            subprocess.run(["powershell", "-Command", f"(Get-WmiObject -Namespace root/WMI -Class WmiMonitorBrightnessMethods).WmiSetBrightness(1,{value})"], shell=True)
+            subprocess.run(
+                [
+                    "powershell",
+                    "-Command",
+                    f"(Get-WmiObject -Namespace root/WMI -Class WmiMonitorBrightnessMethods).WmiSetBrightness(1,{value})",
+                ],
+                shell=True,
+            )
         else:
             brightness = value / 100.0
-            subprocess.run(["xrandr", "--output", "eDP-1", "--brightness", str(brightness)], shell=True)
+            subprocess.run(
+                ["xrandr", "--output", "eDP-1", "--brightness", str(brightness)],
+                shell=True,
+            )
     except:
         pass
 
@@ -23,6 +34,7 @@ def volume_up():
     try:
         if system == "windows":
             import keyboard
+
             keyboard.send("volume up")
         else:
             subprocess.run(["amixer", "set", "Master", "5%+"], shell=True)
@@ -34,6 +46,7 @@ def volume_down():
     try:
         if system == "windows":
             import keyboard
+
             keyboard.send("volume down")
         else:
             subprocess.run(["amixer", "set", "Master", "5%-"], shell=True)
@@ -52,7 +65,9 @@ def toggle_bluetooth(enabled):
 def sleep_mode():
     try:
         if system == "windows":
-            subprocess.run(["rundll32.exe", "powrprof.dll,SetSuspendState", "0,1,0"], shell=True)
+            subprocess.run(
+                ["rundll32.exe", "powrprof.dll,SetSuspendState", "0,1,0"], shell=True
+            )
         else:
             subprocess.run(["systemctl", "suspend"], shell=True)
     except:
@@ -84,9 +99,39 @@ def open_autostart_page():
         if system == "windows":
             subprocess.run(["msconfig"], shell=True)
         else:
-            subprocess.run(["nautilus", os.path.expanduser("~/.config/autostart/")], shell=True)
+            subprocess.run(
+                ["nautilus", os.path.expanduser("~/.config/autostart/")], shell=True
+            )
     except:
         pass
+
+
+def clear_data():
+    from database import SystemDatabase
+
+    db = SystemDatabase()
+    deleted = db.clear_logs()
+    print(f"Удалено {deleted} старых записей")
+
+
+db_viewer_window = None
+
+
+def open_db_viewer():
+    try:
+        from db_viewer import create_db_viewer
+        from widgets.custom_widgets import CustomWindow
+
+        viewer_widget = create_db_viewer()
+        window = CustomWindow("Просмотр данных БД", 900, 600)
+        window.add_widget(viewer_widget)
+        window.show()
+
+        global db_viewer_window
+        db_viewer_window = window
+        print("Окно БД открыто")
+    except Exception as e:
+        print(f"Ошибка открытия окна БД: {e}")
 
 
 def create_settings():
@@ -121,16 +166,25 @@ def create_settings():
     panel.add_widget(wifi_check)
     panel.add_widget(bluetooth_check)
 
-    autostart_btn = CustomButton("Управление автозагрузкой")
+    view_db_btn = CustomButton("Просмотр данных БД", min_height=45)
+    view_db_btn.clicked.connect(open_db_viewer)
+
+    clear_btn = CustomButton("Очистить БД", min_height=45)
+    clear_btn.clicked.connect(clear_data)
+
+    panel.add_widget(view_db_btn)
+    panel.add_widget(clear_btn)
+
+    autostart_btn = CustomButton("Управление автозагрузкой", min_height=45)
     autostart_btn.clicked.connect(open_autostart_page)
 
-    sleep_btn = CustomButton("Спящий режим")
+    sleep_btn = CustomButton("Спящий режим", min_height=45)
     sleep_btn.clicked.connect(sleep_mode)
 
-    restart_btn = CustomButton("Перезагрузка")
+    restart_btn = CustomButton("Перезагрузка", min_height=45)
     restart_btn.clicked.connect(restart_system)
 
-    shutdown_btn = CustomButton("Выключение")
+    shutdown_btn = CustomButton("Выключение", min_height=45)
     shutdown_btn.clicked.connect(shutdown_system)
 
     panel.add_widget(autostart_btn)
